@@ -44,7 +44,7 @@ J'ai commencé par analyser manuellement les fichiers principaux : `userControll
 ## 4. Mise en Place de SonarQube
 
 ### Installation :  
-- Installation de Java 11.  
+- Installation de Java 17.  
 - Téléchargement et lancement de SonarQube Community Edition en local.  
 - Accès à l’interface web sur `http://localhost:9000` (admin/admin).  
 
