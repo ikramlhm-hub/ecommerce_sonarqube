@@ -1,7 +1,7 @@
 organization=ikramlhm-hub
 projectKey=ikramlhm-hub_ecommerce_sonarqube
 serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.64748
+serverVersion=8.0.0.64773
 dashboardUrl=https://sonarcloud.io/dashboard?id=ikramlhm-hub_ecommerce_sonarqube
-ceTaskId=AZeh-ORYmJKut-dsAwfE
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZeh-ORYmJKut-dsAwfE
+ceTaskId=AZeiTI6qP8Zp_y1FhcG2
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZeiTI6qP8Zp_y1FhcG2

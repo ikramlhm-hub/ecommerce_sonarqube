@@ -1,67 +1,120 @@
-# TP – Qualité, Sécurité et Maintenabilité du Code avec SonarQube
+# Rapport TP – Qualité, Sécurité et Maintenabilité du Code avec SonarQube
 
 **Nom** : Ikram Lahmouri  
 **Projet** : ecommerce-api (Node.js)  
-**Date** : 24 Juin 2025
+**Date** : 24 Juin 2025  
 
 ---
 
-## 1. Analyse manuelle des problèmes
+## 1. Contexte et Objectifs Pédagogiques
 
-Avant d’utiliser SonarQube, j’ai procédé à une revue attentive du code pour identifier les erreurs potentielles :
-
-- Dans `auth.js`, une erreur critique : une affectation (`=`) était utilisée au lieu d’une comparaison stricte (`===`) dans une condition, causant une faille d’autorisation.  
-- Dans `userController.js` :  
-  - Les mots de passe étaient stockés en clair, ce qui représente un risque majeur de sécurité.  
-  - La fonction `createUser` était trop longue et complexe, rendant la maintenance difficile.  
-  - La validation des entrées utilisateur était insuffisante, limitée à une vérification simple d’égalité avec une chaîne vide.  
-  - La fonction `listUsers` renvoyait les noms sans échappement, exposant à une faille XSS si les noms contenaient du code HTML.  
-- Dans `utils.js`, les fonctions de logs étaient presque identiques, ce qui créait une duplication inutile, réduisant la clarté du code.
+Ce TP vise à comprendre l'impact des bugs cachés, des code smells et des failles de sécurité sur la qualité d’un projet logiciel. Il s'agit de pratiquer l'identification et la correction de problèmes dans un code existant, d’utiliser SonarQube pour une analyse automatique, et d’intégrer cette analyse dans un pipeline Git.
 
 ---
 
-## 2. Corrections apportées
+## 2. Analyse Manuelle du Code
 
-J’ai corrigé les points suivants en appliquant des bonnes pratiques de développement :
+J'ai commencé par analyser manuellement les fichiers principaux : `userController.js`, `auth.js`, `utils.js`.  
 
-- Dans `auth.js` : correction de la comparaison pour utiliser `===` au lieu de `=`.  
-- Dans `userController.js` :  
-  - Ajout d’un hachage sécurisé des mots de passe via la librairie `bcrypt`.  
-  - Validation complète et rigoureuse des entrées (type, longueur, contenu) pour éviter les injections et erreurs.  
-  - Refactorisation de `createUser` en fonctions plus petites et lisibles.  
-  - Ajout d’une fonction d’échappement HTML pour prévenir les failles XSS.  
-- Dans `utils.js` : fusion des fonctions de logs en une fonction unique, plus claire et flexible.
-
----
-
-## 3. Mise en place de SonarQube
-
-J’ai installé SonarQube en local (avec Java 11 et version Community), puis :
-
-- Créé et configuré le fichier `sonar-project.properties` à la racine du projet.  
-- Utilisé le scanner CLI SonarScanner pour lancer l’analyse.  
-- Consulté l’interface web SonarQube sur `http://localhost:9000`.  
-
-Les analyses ont permis de confirmer les problèmes identifiés manuellement, mais aussi de détecter des soucis mineurs supplémentaires, notamment liés à la complexité et aux noms de variables.  
-Après correction, l’état du projet est passé à une note **A**, avec zéro bug ou faille critique restante.
+### Points détectés :  
+- Erreur critique dans `auth.js` avec une affectation `=` au lieu d’une comparaison `===`, pouvant entraîner une faille d’autorisation.  
+- Stockage des mots de passe en clair dans `userController.js`.  
+- Validation d'entrée insuffisante (acceptation de chaînes vides ou mal formées).  
+- Risque de faille XSS dans la fonction de liste des utilisateurs qui renvoyait des noms sans échappement HTML.  
+- Duplication de code dans `utils.js` (deux fonctions de log très similaires).  
+- Fonctions trop longues et peu modulaires dans `userController.js`.  
 
 ---
 
-## 4. Intégration continue (bonus)
+## 3. Corrections Apportées
 
-J’ai lié le dépôt GitHub à SonarCloud et ajouté un workflow GitHub Actions permettant :
+### Sécurité et validation :  
+- Remplacement du `=` par `===` dans `auth.js` pour corriger la logique d’autorisation.  
+- Hashage des mots de passe via `bcrypt` dans `userController.js`.  
+- Validation stricte des entrées utilisateurs (regex, contrôle de la chaîne vide).  
+- Échappement des caractères HTML dans `listUsers` pour prévenir les attaques XSS.  
 
-- Le lancement automatique d’une analyse SonarCloud à chaque push.  
-- Une surveillance continue de la qualité du code, facilitant le maintien d’un code propre et sécurisé.
-
----
-
-## 5. Retour d’expérience
-
-Ce TP m’a permis de réaliser à quel point des erreurs apparemment mineures peuvent avoir un impact majeur sur la sécurité et la qualité du code.  
-L’utilisation de SonarQube apporte une visibilité précieuse et permet d’adopter une démarche qualité rigoureuse.  
-Enfin, la mise en place d’un workflow CI avec SonarCloud reflète les pratiques professionnelles en entreprise, rendant cet apprentissage très concret et utile.
+### Qualité du code :  
+- Refactorisation des fonctions longues en fonctions plus courtes et cohérentes.  
+- Fusion des fonctions de log en une fonction unique `logMessage` avec gestion des niveaux (`error` ou `info`).  
+- Nettoyage des duplications et commentaires améliorés.  
 
 ---
 
-> Tous les fichiers corrigés, ainsi que ce rapport, sont disponibles sur mon dépôt GitHub.
+## 4. Mise en Place de SonarQube
+
+### Installation :  
+- Installation de Java 11.  
+- Téléchargement et lancement de SonarQube Community Edition en local.  
+- Accès à l’interface web sur `http://localhost:9000` (admin/admin).  
+
+### Configuration :  
+- Création du projet `ecommerce_sonarqube` dans SonarQube.  
+- Ajout du fichier `sonar-project.properties` à la racine avec les propriétés nécessaires (`sonar.projectKey`, `sonar.organization`, etc.).  
+- Installation du scanner CLI SonarScanner et lancement de l’analyse via la commande `sonar-scanner`.  
+
+### Résultats :  
+- Détection automatique des bugs, vulnérabilités et code smells.  
+- Visualisation claire des zones de code à améliorer.  
+- Couverture de code à 72%, augmentée à 77% après ajout de tests unitaires.  
+- Aucune faille critique restante après corrections.  
+
+---
+
+## 5. Tests Unitaires
+
+J’ai écrit des tests unitaires pour valider le comportement des fonctions critiques :  
+
+- `createUser` : vérification de la création utilisateur avec hash, validation des entrées.  
+- `listUsers` : test d’échappement des noms utilisateurs (protection XSS).  
+- Tests supplémentaires sur le middleware d’authentification.  
+
+Ces tests ont permis de :  
+- Augmenter la couverture de code.  
+- S’assurer de la robustesse fonctionnelle des composants.  
+- Faciliter la maintenance et les évolutions futures.  
+
+---
+
+## 6. Intégration Continue (Bonus)
+
+J’ai lié mon dépôt GitHub à SonarCloud, et configuré un workflow GitHub Actions pour lancer automatiquement l’analyse SonarQube à chaque push.  
+
+Cela garantit une supervision continue de la qualité, un retour rapide en cas de régressions, et une meilleure discipline de codage au sein de l’équipe.
+
+---
+
+## 7. Difficultés et Solutions
+
+### Difficultés rencontrées :  
+- Configuration initiale de SonarScanner, notamment gestion du token d’authentification.  
+- Compatibilité entre modules ES et CommonJS dans Jest pour les tests unitaires.  
+- Gestion des chemins de fichiers et de la couverture dans l’analyse.  
+
+### Solutions apportées :  
+- Ajout de la variable d’environnement `SONAR_TOKEN` et utilisation correcte du token d’accès.  
+- Adaptation de la configuration Jest et Babel pour supporter les modules ES.  
+- Correction des chemins dans `sonar-project.properties`.  
+
+---
+
+## 8. Conclusion et Apprentissage
+
+Ce TP m’a permis de mieux comprendre l’importance de la qualité logicielle au-delà du simple fonctionnement.  
+
+J’ai appris à repérer les erreurs cachées, à sécuriser les entrées, et à automatiser la surveillance qualité avec SonarQube.  
+
+L’ajout des tests unitaires et l’intégration dans un pipeline CI renforcent la fiabilité et la maintenabilité du projet.  
+
+Ce workflow correspond aux bonnes pratiques en entreprise, et me prépare à contribuer efficacement dans des environnements professionnels.
+
+---
+
+## 9. Liens Utiles
+
+- Dépôt GitHub : https://github.com/ikramlhm-hub/ecommerce_sonarqube  
+- Tableau de bord SonarCloud : https://sonarcloud.io/dashboard?id=ikramlhm-hub_ecommerce_sonarqube  
+
+---
+
+*Fin du rapport*

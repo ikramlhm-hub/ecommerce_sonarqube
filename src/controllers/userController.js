@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { escapeHTML } from '../utils/utils.js';
 
-const users = [];
+export const users = [];  // Exporté pour pouvoir réinitialiser en test
 
 /**
  * Crée un utilisateur après validation et hash du mot de passe
